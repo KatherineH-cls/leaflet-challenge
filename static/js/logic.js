@@ -16,10 +16,21 @@ function createFeatures(earthquakeData) {
             "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
     }
 
+    function fillcolor(mag){
+        var color = "blue";
+        if (mag < 1) {color = "#ffd7ce"}
+        else if (mag < 2) {color = "#ffbaab"}
+        else if (mag < 3) {color = "#ff9d8a"}
+        else if (mag < 4) {color = "#fd7e6a"}
+        else if (mag < 5) {color = "#f75b4b"}
+        else {color = "#ef2e2e"}
+        return(color)
+    }
+
     function pointToLayer(feature, latlng) {
         var geojsonMarkerOptions = {
             radius: feature.properties.mag * 2,
-            fillColor: "#ff7800",
+            fillColor: fillcolor(feature.properties.mag),
             color: "transparent",
             weight: 1,
             opacity: 1,
