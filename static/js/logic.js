@@ -65,17 +65,19 @@ function createMap(earthquakes) {
     });
 
     var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        // attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
         tileSize: 512,
         maxZoom: 10,
+        zoomOffset: -1,
         id: "dark-v10",
         accessToken: API_KEY
     });
 
     var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        // attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
         tileSize: 512,
         maxZoom: 10,
+        zoomOffset: -1,
         id: "light-v10",
         accessToken: API_KEY
     });
@@ -129,35 +131,30 @@ function createMap(earthquakes) {
     }).addTo(myMap);
 
     // Set up the legend
-  var legend = L.control({ position: "bottomright" });
-  legend.onAdd = function() {
-    var div = L.DomUtil.create("div", "info legend");
-    var limits = [1,2,3,4,5,6];
-    var colors = ["#ef2e2e",
-        "#f75b4b",
-        "#fd7e6a",
-        "#ff9d8a",
-        "#ffbaab",
-        "#ffd7ce"];
-    var labels = ["<1", "1-2", "2-3", "3-4", "4-5", ">5"];
+    var legend = L.control({ position: "bottomright" });
+    legend.onAdd = function () {
+        var div = L.DomUtil.create("div", "info legend");
+        var grades = [0, 1, 2, 3, 4, 5];
+        var colors = [
+            "#ffd7ce",
+            "#ffbaab",
+            "#ff9d8a",
+            "#fd7e6a",
+            "#f75b4b",
+            "#ef2e2e"];
+        // var labels = [];
 
-    // Add min & max
-    var legendInfo = "<h1>Magnitude of Earthquake</h1>" +
-      "<div class=\"labels\">" +
-        "<div class=\"min\">" + limits[0] + "</div>" +
-        "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
-      "</div>";
+        div.innerHTML = '<h6>Earthquake <br> Magnitude</h6>';
 
-    div.innerHTML = legendInfo;
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + colors[i] + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
 
-    limits.forEach(function(limit, index) {
-      labels.push("<li style=\"background-color: " + colors[index] + "\"></li>");
-    });
+        return div;
+    };
 
-    div.innerHTML += "<ul>" + labels.join("") + "</ul>";
-    return div;
-  };
-
-  // Adding legend to the map
-  legend.addTo(myMap);
+    // Adding legend to the map
+    legend.addTo(myMap);
 }
