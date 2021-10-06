@@ -16,36 +16,49 @@ function createFeatures(earthquakeData) {
             "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
     }
 
+    function pointToLayer(feature, latlng) {
+        var geojsonMarkerOptions = {
+            radius: feature.properties.mag * 2,
+            fillColor: "#ff7800",
+            color: "transparent",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+        };
+        return L.circleMarker(latlng, geojsonMarkerOptions);
+    }
     // Create a GeoJSON layer containing the features array on the earthquakeData object
     // Run the onEachFeature function once for each piece of data in the array
     // var earthquakes = L.geoJSON(earthquakeData, {
     //     onEachFeature: onEachFeature
     // });
 
-    var geojsonMarkerOptions = {
-        radius: 8,
-        fillColor: "#ff7800",
-        color: "#000",
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-    };
-    
     var circles = L.geoJSON(earthquakeData, {
-        pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, geojsonMarkerOptions);
-        }
+        // pointToLayer: function (feature, latlng) {
+        //     var geojsonMarkerOptions = {
+        //         radius: 8,
+        //         fillColor: "#ff7800",
+        //         color: "#000",
+        //         weight: 1,
+        //         opacity: 1,
+        //         fillOpacity: 0.8
+        //     };
+        //     return L.circleMarker(latlng, geojsonMarkerOptions);
+        //     },
+        pointToLayer: pointToLayer,
+        onEachFeature: onEachFeature
+
     });
 
     // cities.forEach(city => {
-//   L.circle(cities[i].location, {
-//     fillOpacity: 0.75,
-//     color: "white",
-//     fillColor: "purple",
-//     // Setting our circle's radius equal to the output of our markerSize function
-//     // This will make our marker's size proportionate to its population
-//     radius: markerSize(cities[i].population)
-//   })
+    //   L.circle(cities[i].location, {
+    //     fillOpacity: 0.75,
+    //     color: "white",
+    //     fillColor: "purple",
+    //     // Setting our circle's radius equal to the output of our markerSize function
+    //     // This will make our marker's size proportionate to its population
+    //     radius: markerSize(cities[i].population)
+    //   })
 
     // Sending our earthquakes layer to the createMap function
     createMap(circles);
