@@ -1,11 +1,24 @@
 // Store our API endpoint inside queryUrl
+// url for earthquake data
 var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+// url for tectonic plate data
+var plateUrl = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json"
+
+//#396fff
 
 // Perform a GET request to the query URL
 d3.json(queryUrl).then(function (data) {
     // Once we get a response, send the data.features object to the createFeatures function
     createFeatures(data.features);
 });
+
+
+
+// // Grabbing our GeoJSON data..
+// var plates = d3.json(plateUrl).then(function (data) {
+//     // Creating a GeoJSON layer with the retrieved data
+//     L.geoJson(data);
+// });
 
 function createFeatures(earthquakeData) {
 
@@ -47,6 +60,8 @@ function createFeatures(earthquakeData) {
         pointToLayer: pointToLayer,
         onEachFeature: onEachFeature
     });
+
+
 
     // Sending our earthquakes layer to the createMap function
     createMap(earthquakes);
@@ -102,16 +117,33 @@ function createMap(earthquakes) {
 
     // Define a baseMaps object to hold our base layers
     var baseMaps = {
-        "Street Map": streetmap,
+        "Satellite": satellite,
         "Dark Map": darkmap,
         "Light Map": lightmap,
-        "Satellite": satellite,
         "Outdoors": outdoors
     };
 
+    // Grabbing our GeoJSON data..
+    var plates = new L.LayerGroup();
+    d3.json(plateUrl).then(function (data) {
+        
+        // Our style object
+        var platesStyle = {
+            color: "#396fff",
+            fill : "none",
+            "weight" : 1
+        }
+        // Creating a GeoJSON layer with the retrieved data
+        L.geoJson(data, {style: platesStyle}).addTo(plates);
+        // console.log(plates);
+        // return (plates);
+    });
+    console.log(plates);
+
     // Create overlay object to hold our overlay layer
     var overlayMaps = {
-        Earthquakes: earthquakes
+        "Earthquakes": earthquakes,
+        "Tectonic Plates": plates
     };
 
     // Create our map, giving it the streetmap and earthquakes layers to display on load
@@ -120,7 +152,7 @@ function createMap(earthquakes) {
             37.09, -95.71
         ],
         zoom: 2,
-        layers: [streetmap, earthquakes]
+        layers: [satellite, earthquakes]
     });
 
     // Create a layer control
@@ -158,3 +190,5 @@ function createMap(earthquakes) {
     // Adding legend to the map
     legend.addTo(myMap);
 }
+
+
